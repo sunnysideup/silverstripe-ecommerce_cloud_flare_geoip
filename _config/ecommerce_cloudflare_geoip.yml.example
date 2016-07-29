@@ -1,0 +1,8 @@
+---
+name: ecommerce_cloudflare_geoip_custom
+---
+
+#country and ip for testing ...
+CloudFlareGeoip:
+  forced_country_code: "AU"
+  forced_ip_address: "127.0.0.1"

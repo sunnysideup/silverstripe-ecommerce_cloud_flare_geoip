@@ -1,0 +1,8 @@
+---
+Name: ecommerce_cloudflare_geoip
+Before: 'mysite/*'
+After: 'framework/*','cms/*', 'ecommerce/*'
+---
+
+EcommerceCountry:
+  visitor_country_provider: "EcommerceCountry_VisitorCountryProviderCloudFlare"
