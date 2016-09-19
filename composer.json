@@ -3,6 +3,9 @@
     "type": "silverstripe-module",
     "description": "Provider additional country intelligence to e-commerce (where people are from, changing countries for testing, etc...)",
     "keywords": [
+        "Silverstripe-CMS",
+        "CMS",
+        "Silverstripe",
         "e-commerce",
         "shop",
         "ecommerce",
@@ -20,8 +23,9 @@
         }
     ],
     "require": {
-        "silverstripe/framework": "^3.4",
-        "sunnysideup/ecommerce": "*"
+        "silverstripe/framework": "~3.1",
+        "sunnysideup/ecommerce": "*",
+        "silverstripe/cms": "~3.1"
     },
     "extra": {
         "installer-name": "ecommerce_cloud_flare_geoip"

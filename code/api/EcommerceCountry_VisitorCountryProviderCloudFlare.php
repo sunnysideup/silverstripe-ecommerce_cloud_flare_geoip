@@ -9,8 +9,8 @@
  *
  *
  */
-class EcommerceCountry_VisitorCountryProviderCloudFlare extends Object implements EcommerceGEOipProvider {
-
+class EcommerceCountry_VisitorCountryProviderCloudFlare extends Object implements EcommerceGEOipProvider
+{
     private static $forced_country_code = "";
 
     private static $forced_ip_address = "";
@@ -18,18 +18,19 @@ class EcommerceCountry_VisitorCountryProviderCloudFlare extends Object implement
      *
      * @return String (Country Code - e.g. NZ, AU, or AF)
      */
-    public function getCountry() {
-        if($code = Config::inst()->get("EcommerceCountry_VisitorCountryProviderCloudFlare", "forced_country_code")) {
+    public function getCountry()
+    {
+        if ($code = Config::inst()->get("EcommerceCountry_VisitorCountryProviderCloudFlare", "forced_country_code")) {
             return $code;
         }
         return CloudFlareGeoip::visitor_country();
     }
 
-    public function getIP(){
-        if($ip = Config::inst()->get("EcommerceCountry_VisitorCountryProviderCloudFlare", "forced_ip_address")) {
+    public function getIP()
+    {
+        if ($ip = Config::inst()->get("EcommerceCountry_VisitorCountryProviderCloudFlare", "forced_ip_address")) {
             return $ip;
         }
         return CloudFlareGeoip::get_remote_address();
     }
-
 }

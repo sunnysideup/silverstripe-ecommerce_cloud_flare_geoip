@@ -1,6 +1,7 @@
 <?php
 
-class CloudFlareGeoip extends Geoip {
+class CloudFlareGeoip extends Geoip
+{
 
     /**
      * Find the country for an IP address.
@@ -15,10 +16,11 @@ class CloudFlareGeoip extends Geoip {
      * @param string $address The IP address to get the country of
      * @param boolean $codeOnly Returns just the country code
      */
-    static function ip2country($address, $codeOnly = false) {
+    public static function ip2country($address, $codeOnly = false)
+    {
         $code = parent::ip2country($address, $codeOnly);
-        if(!$code) {
-            if(isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
+        if (!$code) {
+            if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
                 $code = $_SERVER["HTTP_CF_IPCOUNTRY"];
             }
         }
@@ -30,27 +32,28 @@ class CloudFlareGeoip extends Geoip {
      *
      * @return string|bool
      */
-    public static function visitor_country() {
+    public static function visitor_country()
+    {
         $code = null;
-        if (Director::isDev()){
-            if (isset($_GET['countryfortestingonly'])){
+        if (Director::isDev()) {
+            if (isset($_GET['countryfortestingonly'])) {
                 $code = $_GET['countryfortestingonly'];
                 Session::set("countryfortestingonly", $code);
             }
-            if($code = Session::get("countryfortestingonly")) {
+            if ($code = Session::get("countryfortestingonly")) {
                 Session::set("MyCloudFlareCountry", $code);
             }
         }
-        if(!$code) {
+        if (!$code) {
             $code = Session::get("MyCloudFlareCountry");
-            if(!$code) {
+            if (!$code) {
                 if ($address = self::get_remote_address()) {
                     $code = CloudFlareGeoip::ip2country($address, true);
                 }
-                if(!$code) {
+                if (!$code) {
                     $code = self::get_default_country_code();
                 }
-                if(!$code) {
+                if (!$code) {
                     $code = Config::inst()->get("EcommerceCountry", "default_country_code");
                 }
                 Session::set("MyCloudFlareCountry", $code);
@@ -59,19 +62,18 @@ class CloudFlareGeoip extends Geoip {
         return $code;
     }
 
-    public static function get_remote_address(){
+    public static function get_remote_address()
+    {
         $ip = null;
-        if( ! Session::get("MyCloudFlareIPAddress") || (isset($_GET["ipfortestingonly"]))) {
-            if(isset($_GET["ipfortestingonly"]) && Director::isDev()) {
+        if (! Session::get("MyCloudFlareIPAddress") || (isset($_GET["ipfortestingonly"]))) {
+            if (isset($_GET["ipfortestingonly"]) && Director::isDev()) {
                 $ip = $_GET["ipfortestingonly"];
             }
             if (isset($_SERVER['HTTP_CLIENT_IP'])) {
                 $ip = $_SERVER['HTTP_CLIENT_IP'];
-            }
-            elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
                 $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-            }
-            elseif (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            } elseif (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
                 $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
             }
             if (
@@ -80,14 +82,13 @@ class CloudFlareGeoip extends Geoip {
             ) {
                 $ip = $_SERVER['REMOTE_ADDR'];
             }
-            if($ip) {
+            if ($ip) {
                 Session::set("MyCloudFlareIPAddress", $ip);
             }
         }
-        if($ip) {
+        if ($ip) {
             return $ip;
-        }
-        else {
+        } else {
             return Session::get("MyCloudFlareIPAddress");
         }
     }
