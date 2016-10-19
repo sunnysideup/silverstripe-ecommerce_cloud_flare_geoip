@@ -3,6 +3,8 @@
 class CloudFlareGeoip extends Geoip
 {
 
+    private static $debug_email = '';
+
     /**
      * Find the country for an IP address.
      *
@@ -18,13 +20,28 @@ class CloudFlareGeoip extends Geoip
      */
     public static function ip2country($address, $codeOnly = false)
     {
-        $code = parent::ip2country($address, $codeOnly);
-        if (!$code) {
-            if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
-                $code = $_SERVER["HTTP_CF_IPCOUNTRY"];
+
+        $code1 = parent::ip2country($address, $codeOnly);
+        $code2 = null;
+        if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
+            $code2 = $_SERVER["HTTP_CF_IPCOUNTRY"];
+        }
+        if($code1 && $code2 && $code2 != $code1) {
+            $from = Config::inst()->get('CloudFlareGeoip', 'debug_email');
+            if($from) {
+                $to = $from;
+                $subject =
+                    'GEOIP CONFLICT on ' .
+                     Director::absoluteURL().
+                     ' for IP: '.self::get_remote_address().
+                      ' geoiplookup code ' . $code1 .
+                      ' CF code ' . $code2;
+                $body = $subject;
+                $email = Email::create($from, $to, $subject, $body);
+                $email->sendPlain();
             }
         }
-        return $code;
+        return $code2 ? $code2 : $code1 ;
     }
 
     /**
@@ -44,6 +61,7 @@ class CloudFlareGeoip extends Geoip
                 Session::set("MyCloudFlareCountry", $code);
             }
         }
+
         if (!$code) {
             $code = Session::get("MyCloudFlareCountry");
             if (!$code) {
@@ -59,6 +77,7 @@ class CloudFlareGeoip extends Geoip
                 Session::set("MyCloudFlareCountry", $code);
             }
         }
+
         return $code;
     }
 
