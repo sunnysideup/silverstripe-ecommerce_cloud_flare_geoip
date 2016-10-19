@@ -6,3 +6,4 @@ name: ecommerce_cloudflare_geoip_custom
 CloudFlareGeoip:
   forced_country_code: "AU"
   forced_ip_address: "127.0.0.1"
+  debug_email: 'dev@sunnysideup.co.nz'
