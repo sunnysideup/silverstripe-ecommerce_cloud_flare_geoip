@@ -2,7 +2,6 @@
 
 class CloudFlareGeoip extends Geoip
 {
-
     private static $debug_email = '';
 
     /**
@@ -20,15 +19,14 @@ class CloudFlareGeoip extends Geoip
      */
     public static function ip2country($address, $codeOnly = false)
     {
-
         $code1 = parent::ip2country($address, $codeOnly);
         $code2 = null;
         if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
             $code2 = $_SERVER["HTTP_CF_IPCOUNTRY"];
         }
-        if($code1 && $code2 && $code2 != $code1) {
+        if ($code1 && $code2 && $code2 != $code1) {
             $from = Config::inst()->get('CloudFlareGeoip', 'debug_email');
-            if($from) {
+            if ($from) {
                 $to = $from;
                 $subject =
                     'GEOIP CONFLICT on ' .
