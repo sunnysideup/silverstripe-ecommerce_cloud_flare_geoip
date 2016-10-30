@@ -39,7 +39,7 @@ class CloudFlareGeoip extends Geoip
                 Director::absoluteURL().
                 ' for IP: '.self::get_remote_address().
                  ' geoiplookup code: --' . $code1 . '--'.
-                 ' CF code: --' . $code2 . '--;
+                 ' CF code: --' . $code2 . '--';
             $to = $from;
             $body = $subject;
             $email = Email::create($from, $to, $subject, $body);
