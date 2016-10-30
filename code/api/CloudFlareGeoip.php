@@ -26,20 +26,24 @@ class CloudFlareGeoip extends Geoip
         if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
             $code2 = $_SERVER["HTTP_CF_IPCOUNTRY"];
         }
-        if($code1 && $code2 && $code2 != $code1) {
-            $from = Config::inst()->get('CloudFlareGeoip', 'debug_email');
-            if($from) {
-                $to = $from;
-                $subject =
-                    'GEOIP CONFLICT on ' .
-                     Director::absoluteURL().
-                     ' for IP: '.self::get_remote_address().
-                      ' geoiplookup code ' . $code1 .
-                      ' CF code ' . $code2;
-                $body = $subject;
-                $email = Email::create($from, $to, $subject, $body);
-                $email->sendPlain();
+        $from = Config::inst()->get('CloudFlareGeoip', 'debug_email');
+        if($from && $code2 != $code1) {
+            if( ! $code1) {
+                $subject = 'CloudFlareGeoip: NO GEOLOOKUP PRESENT ';
+            } else if( ! $code2) {
+                $subject = 'CloudFlareGeoip: NO CF COUNTRY PRESENT ';
+            } else {
+                $subject = 'CloudFlareGeoip: GEOIP CONFLICT on ';
             }
+            $subject .=
+                Director::absoluteURL().
+                ' for IP: '.self::get_remote_address().
+                 ' geoiplookup code: --' . $code1 . '--'.
+                 ' CF code: --' . $code2 . '--;
+            $to = $from;
+            $body = $subject;
+            $email = Email::create($from, $to, $subject, $body);
+            $email->sendPlain();
         }
         return $code2 ? $code2 : $code1 ;
     }
