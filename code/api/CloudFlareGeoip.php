@@ -85,34 +85,25 @@ class CloudFlareGeoip extends Geoip
         return $code;
     }
 
+    /**
+     * @see: http://stackoverflow.com/questions/14985518/cloudflare-and-logging-visitor-ip-addresses-via-in-php
+     * @return string
+     */
     public static function get_remote_address()
     {
         $ip = null;
-        if (! Session::get("MyCloudFlareIPAddress") || (isset($_GET["ipfortestingonly"]))) {
-            if (isset($_GET["ipfortestingonly"]) && Director::isDev()) {
-                $ip = $_GET["ipfortestingonly"];
-            }
-            if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-                $ip = $_SERVER['HTTP_CLIENT_IP'];
-            } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-            } elseif (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-                $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
-            }
-            if (
-                !$ip ||
-                !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)
-            ) {
-                $ip = $_SERVER['REMOTE_ADDR'];
-            }
-            if ($ip) {
-                Session::set("MyCloudFlareIPAddress", $ip);
-            }
+        if (isset($_GET["ipfortestingonly"]) && Director::isDev()) {
+            $ip = $_GET["ipfortestingonly"];
+        
+        } elseif (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
-        if ($ip) {
-            return $ip;
-        } else {
-            return Session::get("MyCloudFlareIPAddress");
+        if (
+            !$ip ||
+            !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)
+        ) {
+            $ip = Controller::curr()->getRequest()->getIP();
         }
+        return $ip;
     }
 }
