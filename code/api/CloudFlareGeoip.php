@@ -92,7 +92,6 @@ class CloudFlareGeoip extends Geoip
         $ip = null;
         if (isset($_GET["ipfortestingonly"]) && Director::isDev()) {
             $ip = $_GET["ipfortestingonly"];
-        
         } elseif (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
             $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
