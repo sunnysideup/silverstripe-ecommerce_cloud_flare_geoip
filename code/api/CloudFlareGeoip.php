@@ -19,7 +19,6 @@ class CloudFlareGeoip extends Geoip
      */
     public static function ip2country($address, $codeOnly = false)
     {
-        return 'DK';
         $results1 = null;
         $results2 = null;
         if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
