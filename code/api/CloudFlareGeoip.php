@@ -57,20 +57,23 @@ class CloudFlareGeoip extends Geoip
                 Session::set("MyCloudFlareCountry", $code);
             }
         }
-
         if (!$code) {
-            $code = Session::get("MyCloudFlareCountry");
-            if (!$code) {
-                if ($address = self::get_remote_address()) {
-                    $code = CloudFlareGeoip::ip2country($address, true);
-                }
+            if (isset($_SERVER["HTTP_CF_IPCOUNTRY"]) && $_SERVER["HTTP_CF_IPCOUNTRY"]) {
+                return $_SERVER["HTTP_CF_IPCOUNTRY"];
+            } else {
+                $code = Session::get("MyCloudFlareCountry");
                 if (!$code) {
-                    $code = self::get_default_country_code();
+                    if ($address = self::get_remote_address()) {
+                        $code = CloudFlareGeoip::ip2country($address, true);
+                    }
+                    if (!$code) {
+                        $code = self::get_default_country_code();
+                    }
+                    if (!$code) {
+                        $code = Config::inst()->get("EcommerceCountry", "default_country_code");
+                    }
+                    Session::set("MyCloudFlareCountry", $code);
                 }
-                if (!$code) {
-                    $code = Config::inst()->get("EcommerceCountry", "default_country_code");
-                }
-                Session::set("MyCloudFlareCountry", $code);
             }
         }
 
