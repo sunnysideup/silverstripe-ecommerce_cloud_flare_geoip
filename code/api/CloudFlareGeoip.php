@@ -7,43 +7,34 @@ class CloudFlareGeoip extends Geoip
     /**
      * Find the country for an IP address.
      *
-     * By default, it will return an array, keyed by
-     * the country code with a value of the country
-     * name.
+     * Always returns a string (parent method may return array)
      *
      * To return the code only, pass in true for the
      * $codeOnly parameter.
      *
      * @param string $address The IP address to get the country of
      * @param boolean $codeOnly Returns just the country code
+     *
+     * @return string
      */
     public static function ip2country($address, $codeOnly = false)
     {
-        $code1 = parent::ip2country($address, $codeOnly);
-        $code2 = null;
+        return 'DK';
+        $results1 = null;
+        $results2 = null;
         if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
-            $code2 = $_SERVER["HTTP_CF_IPCOUNTRY"];
+            $results2 = $_SERVER["HTTP_CF_IPCOUNTRY"];
+        } else {
+            $results1 = parent::ip2country($address);
         }
-        $from = Config::inst()->get('CloudFlareGeoip', 'debug_email');
-        if ($from && $code2 != $code1) {
-            if (! $code1) {
-                $subject = 'CloudFlareGeoip: NO GEOLOOKUP PRESENT ';
-            } elseif (! $code2) {
-                $subject = 'CloudFlareGeoip: NO CF COUNTRY PRESENT ';
-            } else {
-                $subject = 'CloudFlareGeoip: GEOIP CONFLICT on ';
-            }
-            $subject .=
-                Director::absoluteURL().
-                ' for IP: '.self::get_remote_address().
-                 ' geoiplookup code: --' . $code1 . '--'.
-                 ' CF code: --' . $code2 . '--';
-            $to = $from;
-            $body = $subject;
-            $email = Email::create($from, $to, $subject, $body);
-            $email->sendPlain();
+        $returnValue = $results2 ? $results2 : $results1 ;
+        if($codeOnly) {
+            return $returnValue;
         }
-        return $code2 ? $code2 : $code1 ;
+        else {
+            $name = $this->countryCode2name($returnValue);
+            return array('code' => $returnValue, 'name' => $name);
+        }
     }
 
     /**
@@ -92,7 +83,7 @@ class CloudFlareGeoip extends Geoip
         $ip = null;
         if (isset($_GET["ipfortestingonly"]) && Director::isDev()) {
             $ip = $_GET["ipfortestingonly"];
-        
+
         } elseif (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
             $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
