@@ -28,6 +28,9 @@ class CloudFlareGeoip extends Geoip
         }
         $returnValue = $results2 ? $results2 : $results1 ;
         if($codeOnly) {
+            if(is_array($returnValue)) {
+                return $returnValue['code'];
+            }
             return $returnValue;
         }
         else {
