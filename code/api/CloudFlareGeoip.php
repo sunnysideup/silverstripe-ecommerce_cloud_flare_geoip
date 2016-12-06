@@ -30,8 +30,9 @@ class CloudFlareGeoip extends Geoip
         if($codeOnly) {
             if(is_array($returnValue)) {
                 return $returnValue['code'];
+            } else {
+                return $returnValue;
             }
-            return $returnValue;
         }
         else {
             $name = $this->countryCode2name($returnValue);
