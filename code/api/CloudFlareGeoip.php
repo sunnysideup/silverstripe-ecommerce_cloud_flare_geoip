@@ -27,14 +27,13 @@ class CloudFlareGeoip extends Geoip
             $results1 = parent::ip2country($address);
         }
         $returnValue = $results2 ? $results2 : $results1 ;
-        if($codeOnly) {
-            if(is_array($returnValue)) {
+        if ($codeOnly) {
+            if (is_array($returnValue)) {
                 return $returnValue['code'];
             } else {
                 return $returnValue;
             }
-        }
-        else {
+        } else {
             $name = $this->countryCode2name($returnValue);
             return array('code' => $returnValue, 'name' => $name);
         }
@@ -89,7 +88,6 @@ class CloudFlareGeoip extends Geoip
         $ip = null;
         if (isset($_GET["ipfortestingonly"]) && Director::isDev()) {
             $ip = $_GET["ipfortestingonly"];
-
         } elseif (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
             $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
